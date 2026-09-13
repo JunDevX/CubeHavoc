@@ -1,57 +1,28 @@
-name: Сообщить об ошибке (Bug)
-description: Создайте отчет, чтобы помочь нам исправить баг в Cube Havoc 3D
-title: "[BUG]: "
-labels: ["bug"]
+name: Предложить идею (Feature)
+description: Предложите новую фичу или улучшение для Cube Havoc 3D
+title: "[FEATURE]: "
+labels: ["enhancement"]
 body:
-  - type: input
-    id: version
+  - type: textarea
+    id: feature
     attributes:
-      label: Версия игры
-      placeholder: "например: v1.0, latest release"
+      label: Предложение
+      placeholder: "Опишите вашу идею для игры"
     validations:
       required: true
 
   - type: textarea
-    id: description
+    id: why
     attributes:
-      label: Описание проблемы
-      placeholder: "Четкое и понятное описание того, в чем заключается баг"
-    validations:
-      required: true
-
-  - type: textarea
-    id: steps
-    attributes:
-      label: Шаги для воспроизведения
-      placeholder: |
-        1. 
-        2. 
-        3. 
+      label: Зачем это нужно?
+      placeholder: "Какую проблему это решает или как улучшит геймплей?"
     validations:
       required: false
 
   - type: textarea
-    id: expected
+    id: how
     attributes:
-      label: Ожидаемое поведение
-      placeholder: "Опишите, что должно было произойти на самом деле"
+      label: Как это должно работать?
+      placeholder: "Опишите механики или интерфейс, если есть видение"
     validations:
       required: false
-
-  - type: textarea
-    id: system
-    attributes:
-      label: Ваша система (по желанию)
-      placeholder: |
-        - ОС: Windows / macOS / Linux
-        - Процессор / Видеокарта:
-    validations:
-      required: false
-
-  - type: checkboxes
-    id: checklist
-    attributes:
-      label: Чеклист
-      options:
-        - label: Я искал ответ в официальном DOCS и README!
-          required: true
