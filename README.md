@@ -1,4 +1,9 @@
-# CubeHavoc
+<div align="center">
+
+# <a href="https://discord.gg/zm5p6eGu56"><img src="https://cdn-icons-png.flaticon.com/128/5968/5968756.png" height=28 /></a> <a href="https://github.com/JunDevX/">JunDevX</a><a href="https://github.com/JunDevX/CubeHavoc">/CubeHavoc</a> <a href="https://github.com/JunDevX/CubeHavoc/releases/latest/"><img src="https://cdn-icons-png.flaticon.com/128/2504/2504911.png" height=28 /></a>
+
+</div>
+
 > [!CAUTION]
 > Проект в стадии прогрессивной разработки! Просьба при обнаружении багов / недочётов / вылетов / проблем создавать Issue с скриншотами и логами и полной информацией проблемы! Этим вы очень поможете!
 
