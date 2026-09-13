@@ -10,34 +10,39 @@ jobs:
     steps:
       - name: Send Discord Webhook
         env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
+          RELEASE_NAME: ${{ github.event.release.name || github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          ACTOR: ${{ github.actor }}
         run: |
-          # Формирование JSON для Discord Webhook с синим Embed
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d '{
-                 "embeds": [
-                   {
-                     "title": "НОВЫЙ РЕЛИЗ! '${{ github.event.release.name || github.event.release.tag_name }}'",
-                     "color": 3447003,
-                     "fields": [
-                       {
-                         "name": "Выпустил",
-                         "value": "[${{ github.actor }}](https://github.com/${{ github.actor }})",
-                         "inline": true
-                       },
-                       {
-                         "name": "Тег релиза",
-                         "value": "```'${{ github.event.release.tag_name }}'```",
-                         "inline": true
-                       },
-                       {
-                         "name": "Установить сейчас",
-                         "value": "[Перейти к релизу]('${{ github.event.release.html_url }}')",
-                         "inline": false
-                       }
-                     ]
-                   }
-                 ]
-               }' \
-               "$DISCORD_WEBHOOK"
+          PAYLOAD=$(jq -n \
+            --arg name "$RELEASE_NAME" \
+            --arg actor "$ACTOR" \
+            --arg tag "$RELEASE_TAG" \
+            --arg url "$RELEASE_URL" \
+            '{
+              embeds: [{
+                title: ("НОВЫЙ РЕЛИЗ! " + $name),
+                color: 3447003,
+                fields: [
+                  {
+                    name: "Выпустил",
+                    value: ("[" + $actor + "](https://github.com/" + $actor + ")"),
+                    inline: true
+                  },
+                  {
+                    name: "Тег релиза",
+                    value: ("```" + $tag + "```"),
+                    inline: true
+                  },
+                  {
+                    name: "Установить сейчас",
+                    value: ("[" + $name + "](" + $url + ")"),
+                    inline: false
+                  }
+                ]
+              }]
+            }')
+
+          curl -g -H "Content-Type: application/json" -X POST -d "$PAYLOAD" "$WEBHOOK_URL"
