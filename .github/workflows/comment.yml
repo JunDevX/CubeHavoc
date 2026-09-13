@@ -1,0 +1,19 @@
+name: Auto comment on new issues
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on new issue
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            # Пожалуйста, ознакомьтесь с README. В нем есть ответы на распространенные вопросы и описания файлов: [README.md](https://github.com/JunDevX/CubeHavoc/blob/main/README.md)
