@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discord Сервер
+    url: https://discord.gg/zm5p6eGu56
+    about: Задавайте вопросы, ищите игроков или общайтесь с сообществом в Discord!
+  - name: Документация & FAQ
+    url: https://github.com/JunDevX/CubeHavoc#readme
+    about: Проверьте ответы на частые вопросы перед созданием Issue.
