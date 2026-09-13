@@ -1,19 +1,28 @@
----
 name: Предложить идею (Feature)
-about: Предложите новую фичу или улучшение для Cube Havoc 3D
-title: '[FEATURE] '
-labels: enhancement
-assignees: ''
+description: Предложите новую фичу или улучшение для Cube Havoc 3D
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: feature
+    attributes:
+      label: Предложение
+      placeholder: "Опишите вашу идею для игры"
+    validations:
+      required: true
 
----
+  - type: textarea
+    id: why
+    attributes:
+      label: Зачем это нужно?
+      placeholder: "Какую проблему это решает или как улучшит геймплей?"
+    validations:
+      required: false
 
-### Предложение
-<!-- Опишите вашу идею для игры -->
-
-
-### Зачем это нужно?
-<!-- Какую проблему это решает или как улучшит геймплей? -->
-
-
-### Как это должно работать?
-<!-- Опишите механики или интерфейс, если есть видение -->
+  - type: textarea
+    id: how
+    attributes:
+      label: Как это должно работать?
+      placeholder: "Опишите механики или интерфейс, если есть видение"
+    validations:
+      required: false
