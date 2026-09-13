@@ -1,0 +1,43 @@
+name: Discord Release Notification
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord Webhook
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          # Формирование JSON для Discord Webhook с синим Embed
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{
+                 "embeds": [
+                   {
+                     "title": "НОВЫЙ РЕЛИЗ! '${{ github.event.release.name || github.event.release.tag_name }}'",
+                     "color": 3447003,
+                     "fields": [
+                       {
+                         "name": "Выпустил",
+                         "value": "[${{ github.actor }}](https://github.com/${{ github.actor }})",
+                         "inline": true
+                       },
+                       {
+                         "name": "Тег релиза",
+                         "value": "```'${{ github.event.release.tag_name }}'```",
+                         "inline": true
+                       },
+                       {
+                         "name": "Установить сейчас",
+                         "value": "[Перейти к релизу]('${{ github.event.release.html_url }}')",
+                         "inline": false
+                       }
+                     ]
+                   }
+                 ]
+               }' \
+               "$DISCORD_WEBHOOK"
