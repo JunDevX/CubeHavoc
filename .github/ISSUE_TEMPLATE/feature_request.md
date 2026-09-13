@@ -1,28 +1,46 @@
-name: Предложить идею (Feature)
-description: Предложите новую фичу или улучшение для Cube Havoc 3D
-title: "[FEATURE]: "
-labels: ["enhancement"]
+name: 💡 Идея / Предложение
+title: '[Предложение] '
+description: Предложить новую функцию или улучшение для CubeHavoc
+labels: ['type: идея', 'status: нуждается в сортировке']
+
 body:
-  - type: textarea
-    id: feature
+  - type: checkboxes
+    id: checklist
     attributes:
-      label: Предложение
-      placeholder: "Опишите вашу идею для игры"
+      label: ⚠️ Чеклист
+      description: Перед созданием предложения, удостоверьтесь что выполнили следующие пункты
+      options:
+        - label: Я проверил, что подобной идеи ещё нет в [Issues](https://github.com/JunDevX/CubeHavoc/issues) или [Discussions](https://github.com/JunDevX/CubeHavoc/discussions)
+        - label: Моё предложение относится к улучшению или новому функционалу CubeHavoc
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Суть предложения
+      description: Кратко опишите, какую функцию или изменение вы хотите увидеть
+      placeholder: Например: Добавить поддержку кастомных шейдеров / оптимизацию для слабых ПК
     validations:
       required: true
 
   - type: textarea
-    id: why
+    id: problem_or_use_case
     attributes:
       label: Зачем это нужно?
-      placeholder: "Какую проблему это решает или как улучшит геймплей?"
+      description: Опишите проблему, которую решает эта идея, или scenario (сценарий) использования
+      placeholder: Это поможет пользователям удобнее настраивать...
     validations:
-      required: false
+      required: true
 
   - type: textarea
-    id: how
+    id: solution_details
     attributes:
-      label: Как это должно работать?
-      placeholder: "Опишите механики или интерфейс, если есть видение"
-    validations:
-      required: false
+      label: Как вы это видите?
+      description: Подробно опишите, как именно должна работать фича или интерфейс (по желанию)
+      placeholder: Описание работы, концепт-арты, макеты или примеры из других проектов
+
+  - type: textarea
+    id: additions
+    attributes:
+      label: Дополнительные детали
+      description: Ссылки, референсы, скриншоты или любые другие полезные материалы
