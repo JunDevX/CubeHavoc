@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cube Havoc — LAN Mayhem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#090d16;
+    --bg-1:#0e1526;
+    --bg-2:#141d33;
+    --line:#26324a;
+    --line-soft:#1b2438;
+    --text:#e8ecf4;
+    --muted:#8493ac;
+    --accent:#f5a623;
+    --accent-2:#ffd28a;
+    --danger:#e2555b;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      /* the game itself only exists in the dark — keep the site the same */
+    }
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg-0);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.mono-label{font-family:'Chakra Petch',sans-serif;}
+  a{color:inherit;}
+  img{max-width:100%;}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+
+  /* ---------- background: grid + scattered dots, like the menu screen ---------- */
+  .skyfield{
+    position:relative;
+    overflow:hidden;
+    border-bottom:1px solid var(--line-soft);
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, #16203a 0%, var(--bg-0) 65%);
+  }
+  .skyfield::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 55%, black 100%);
+            mask-image:linear-gradient(to bottom, transparent 0%, black 55%, black 100%);
+    opacity:.6;
+    pointer-events:none;
+  }
+  .dot{position:absolute;border-radius:50%;pointer-events:none;}
+  .dot.orange{background:var(--accent);box-shadow:0 0 6px rgba(245,166,35,.7);}
+  .dot.white{background:#cfd8ea;opacity:.55;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:96px 0 88px;
+    text-align:center;
+  }
+  .mark{
+    width:56px;height:56px;
+    margin:0 auto 28px;
+    border:2px solid var(--accent);
+    position:relative;
+    background:linear-gradient(160deg,#101a2e,#0b1120);
+    box-shadow:0 0 0 6px rgba(245,166,35,.08);
+  }
+  .mark::before,.mark::after{
+    content:"";
+    position:absolute;
+    background:var(--accent);
+  }
+  .mark::before{left:0;right:0;top:50%;height:2px;transform:translateY(-50%);}
+  .mark::after{top:0;bottom:0;left:50%;width:2px;transform:translateX(-50%);}
+
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:.14em;
+    color:var(--accent);
+    margin:0 0 14px;
+    font-weight:600;
+  }
+  h1.title{
+    font-size:clamp(42px,7vw,72px);
+    font-weight:700;
+    letter-spacing:.03em;
+    margin:0 0 12px;
+  }
+  .tagline{
+    color:var(--muted);
+    font-size:15px;
+    letter-spacing:.08em;
+    margin:0 0 28px;
+  }
+  .tagline strong{color:var(--accent-2);font-weight:600;}
+  .dek{
+    max-width:520px;
+    margin:0 auto 40px;
+    color:#c3cbdc;
+    font-size:17px;
+  }
+
+  .cta-row{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  /* ---------- shared "game menu" button ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:16px 30px;
+    background:var(--bg-1);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    text-decoration:none;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{background:var(--bg-2);}
+  .btn:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;}
+  .btn-primary{border-color:var(--accent);color:var(--accent-2);}
+  .btn-primary:hover{background:rgba(245,166,35,.08);}
+  .btn-ghost{color:var(--muted);}
+
+  /* ---------- section shell ---------- */
+  section{padding:80px 0;}
+  .section-head{max-width:520px;margin-bottom:48px;}
+  .section-head .eyebrow{margin-bottom:10px;}
+  h2{
+    font-size:30px;
+    font-weight:600;
+    margin:0 0 12px;
+  }
+  .section-head p{color:var(--muted);margin:0;font-size:15.5px;}
+
+  /* ---------- features: bordered rows, like a settings list ---------- */
+  .feature-list{border-top:1px solid var(--line-soft);}
+  .feature-row{
+    display:grid;
+    grid-template-columns:24px 220px 1fr;
+    gap:24px;
+    align-items:baseline;
+    padding:22px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .feature-row .chip{
+    width:10px;height:10px;
+    border:1.5px solid var(--accent);
+    margin-top:6px;
+  }
+  .feature-row h3{
+    font-size:17px;
+    font-weight:600;
+    margin:0;
+    letter-spacing:.01em;
+  }
+  .feature-row p{
+    margin:0;
+    color:var(--muted);
+    font-size:15px;
+  }
+  .feature-row.zombie .chip{border-color:var(--danger);}
+
+  @media (max-width:640px){
+    .feature-row{grid-template-columns:18px 1fr;}
+    .feature-row h3{grid-column:2;}
+    .feature-row p{grid-column:2;}
+  }
+
+  /* ---------- download ---------- */
+  .download-panel{
+    border:1px solid var(--line);
+    background:var(--bg-1);
+    padding:40px;
+  }
+  .os-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:28px;
+  }
+  .os-tab{
+    padding:11px 18px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--muted);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .os-tab[aria-selected="true"]{
+    border-color:var(--accent);
+    color:var(--accent-2);
+  }
+  .os-tab:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;}
+
+  .download-row{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .download-info{color:var(--muted);font-size:14px;}
+  .download-info b{color:var(--text);display:block;font-size:16px;margin-bottom:2px;font-family:'Chakra Petch',sans-serif;font-weight:600;}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line-soft);
+    padding:32px 0 40px;
+  }
+  .foot-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .tags{color:var(--muted);font-size:13px;}
+  .tags span{margin:0 8px;}
+  .tags span:first-child{margin-left:0;}
+  footer a.gh{color:var(--muted);font-size:13px;text-decoration:none;border-bottom:1px solid var(--line);}
+  footer a.gh:hover{color:var(--text);border-color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div class="skyfield">
+  <div class="dot orange" style="width:4px;height:4px;top:12%;left:9%;"></div>
+  <div class="dot white" style="width:3px;height:3px;top:18%;left:30%;"></div>
+  <div class="dot orange" style="width:3px;height:3px;top:8%;left:72%;"></div>
+  <div class="dot white" style="width:4px;height:4px;top:24%;left:88%;"></div>
+  <div class="dot orange" style="width:3px;height:3px;top:34%;left:16%;"></div>
+  <div class="dot white" style="width:3px;height:3px;top:40%;left:60%;"></div>
+  <div class="dot orange" style="width:4px;height:4px;top:6%;left:48%;"></div>
+  <div class="dot white" style="width:3px;height:3px;top:46%;left:94%;"></div>
+
+  <header class="hero wrap">
+    <div class="mark" aria-hidden="true"></div>
+    <p class="eyebrow">CUBE HAVOC</p>
+    <h1 class="title">CUBE&nbsp;HAVOC</h1>
+    <p class="tagline">LAN MAYHEM <strong>·</strong> ВЕРСИЯ 3.0</p>
+    <p class="dek">Процедурные арены, честная физика и зомби, которые не прощают промахов. Разверни сервер в своей сети — и играй с друзьями без единого порта, открытого наружу.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#download">Скачать игру</a>
+      <a class="btn btn-ghost" href="https://github.com/JunDevX/CubeHavoc/tree/main" target="_blank" rel="noopener">Исходники на GitHub</a>
+    </div>
+  </header>
+</div>
+
+<main>
+  <section class="wrap" id="features">
+    <div class="section-head">
+      <p class="eyebrow">Что внутри</p>
+      <h2>Игра для одного вечера с друзьями в одной сети</h2>
+      <p>Ни аккаунтов, ни матчмейкинга — только LAN, кубы и последствия.</p>
+    </div>
+
+    <div class="feature-list">
+      <div class="feature-row">
+        <div class="chip"></div>
+        <h3>Процедурные ассеты</h3>
+        <p>Каждый запуск собирает арену заново — планировку, укрытия и мелочи окружения.</p>
+      </div>
+      <div class="feature-row">
+        <div class="chip"></div>
+        <h3>LAN discovery</h3>
+        <p>Серверы в локальной сети находятся сами — не нужно вводить IP вручную.</p>
+      </div>
+      <div class="feature-row">
+        <div class="chip"></div>
+        <h3>Физика</h3>
+        <p>Кубы толкаются, ломаются и разлетаются согласно массе, а не сценарию.</p>
+      </div>
+      <div class="feature-row zombie">
+        <div class="chip"></div>
+        <h3>Зомби-режим</h3>
+        <p>Волны становятся плотнее с каждым раундом — рано или поздно строй развалится.</p>
+      </div>
+      <div class="feature-row">
+        <div class="chip"></div>
+        <h3>Встроенный чат</h3>
+        <p>Договаривайтесь о тактике или предавайте союзников — всё в одном окне.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="download">
+    <div class="section-head">
+      <p class="eyebrow">Установка</p>
+      <h2>Выбери платформу и скачай сборку</h2>
+      <p>Актуальные сборки версии 3.0 публикуются в релизах на GitHub.</p>
+    </div>
+
+    <div class="download-panel">
+      <div class="os-tabs" role="tablist" aria-label="Выбор операционной системы">
+        <button class="os-tab" role="tab" aria-selected="true" data-os="Windows">Windows</button>
+        <button class="os-tab" role="tab" aria-selected="false" data-os="Linux">Linux</button>
+        <button class="os-tab" role="tab" aria-selected="false" data-os="macOS (Intel)">macOS · Intel</button>
+        <button class="os-tab" role="tab" aria-selected="false" data-os="macOS (Apple Silicon)">macOS · Apple Silicon</button>
+      </div>
+
+      <div class="download-row">
+        <a class="btn btn-primary" id="download-btn" href="https://github.com/JunDevX/CubeHavoc/tree/main" target="_blank" rel="noopener">Скачать для Windows</a>
+        <div class="download-info">
+          <b>Cube Havoc 3.0</b>
+          Сборки и заметки о релизе — в репозитории на GitHub
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <p class="tags">
+      <span>Процедурные ассеты</span>·<span>LAN discovery</span>·<span>чат</span>·<span>физика</span>·<span>зомби</span>
+    </p>
+    <a class="gh" href="https://github.com/JunDevX/CubeHavoc/tree/main" target="_blank" rel="noopener">github.com/JunDevX/CubeHavoc</a>
+  </div>
+</footer>
+
+<script>
+  var tabs = document.querySelectorAll('.os-tab');
+  var downloadBtn = document.getElementById('download-btn');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.setAttribute('aria-selected','false'); });
+      tab.setAttribute('aria-selected','true');
+      var os = tab.getAttribute('data-os');
+      downloadBtn.textContent = 'Скачать для ' + os;
+    });
+  });
+</script>
+
+</body>
+</html>
