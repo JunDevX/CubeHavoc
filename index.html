@@ -1,366 +1,535 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cube Havoc — LAN Mayhem</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg-0:#090d16;
-    --bg-1:#0e1526;
-    --bg-2:#141d33;
-    --line:#26324a;
-    --line-soft:#1b2438;
-    --text:#e8ecf4;
-    --muted:#8493ac;
-    --accent:#f5a623;
-    --accent-2:#ffd28a;
-    --danger:#e2555b;
-    box-sizing:border-box;
-    padding-top:env(safe-area-inset-top,0px);
-    padding-bottom:env(safe-area-inset-bottom,0px);
-  }
-  @media (prefers-color-scheme: light){
-    :root:not([data-theme="dark"]){
-      /* the game itself only exists in the dark — keep the site the same */
-    }
-  }
-  *{box-sizing:border-box;}
-  html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth;}
-  html,body{height:100%;}
-  body{
-    margin:0;
-    background:var(--bg-0);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-  h1,h2,h3,.mono-label{font-family:'Chakra Petch',sans-serif;}
-  a{color:inherit;}
-  img{max-width:100%;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CubeHavoc тебя могнул! | Официальная страница установки CubeHavoc</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        havocRed: '#ff2a4b',
+                        havocRedDark: '#b3122c',
+                        havocDark: '#0a0a0c',
+                        havocCard: '#121218',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
 
-  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+    <style>
+        body {
+            background-color: #070709;
+            color: #ffffff;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+        }
 
-  /* ---------- background: grid + scattered dots, like the menu screen ---------- */
-  .skyfield{
-    position:relative;
-    overflow:hidden;
-    border-bottom:1px solid var(--line-soft);
-    background:
-      radial-gradient(ellipse 900px 500px at 50% -10%, #16203a 0%, var(--bg-0) 65%);
-  }
-  .skyfield::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background-image:
-      linear-gradient(var(--line-soft) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
-    background-size:64px 64px;
-    -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 55%, black 100%);
-            mask-image:linear-gradient(to bottom, transparent 0%, black 55%, black 100%);
-    opacity:.6;
-    pointer-events:none;
-  }
-  .dot{position:absolute;border-radius:50%;pointer-events:none;}
-  .dot.orange{background:var(--accent);box-shadow:0 0 6px rgba(245,166,35,.7);}
-  .dot.white{background:#cfd8ea;opacity:.55;}
+        /* Canvas background styling */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
 
-  /* ---------- hero ---------- */
-  .hero{
-    position:relative;
-    padding:96px 0 88px;
-    text-align:center;
-  }
-  .mark{
-    width:56px;height:56px;
-    margin:0 auto 28px;
-    border:2px solid var(--accent);
-    position:relative;
-    background:linear-gradient(160deg,#101a2e,#0b1120);
-    box-shadow:0 0 0 6px rgba(245,166,35,.08);
-  }
-  .mark::before,.mark::after{
-    content:"";
-    position:absolute;
-    background:var(--accent);
-  }
-  .mark::before{left:0;right:0;top:50%;height:2px;transform:translateY(-50%);}
-  .mark::after{top:0;bottom:0;left:50%;width:2px;transform:translateX(-50%);}
+        /* Title Typewriter & Underline Effect */
+        .typewriter-text {
+            border-right: 3px solid #ff2a4b;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            animation: blink-caret 0.75s step-end infinite;
+        }
 
-  .eyebrow{
-    font-size:13px;
-    letter-spacing:.14em;
-    color:var(--accent);
-    margin:0 0 14px;
-    font-weight:600;
-  }
-  h1.title{
-    font-size:clamp(42px,7vw,72px);
-    font-weight:700;
-    letter-spacing:.03em;
-    margin:0 0 12px;
-  }
-  .tagline{
-    color:var(--muted);
-    font-size:15px;
-    letter-spacing:.08em;
-    margin:0 0 28px;
-  }
-  .tagline strong{color:var(--accent-2);font-weight:600;}
-  .dek{
-    max-width:520px;
-    margin:0 auto 40px;
-    color:#c3cbdc;
-    font-size:17px;
-  }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #ff2a4b; }
+        }
 
-  .cta-row{
-    display:flex;
-    gap:16px;
-    justify-content:center;
-    flex-wrap:wrap;
-  }
+        /* Animated Glowing Red Underline */
+        .animated-underline {
+            position: relative;
+            display: inline-block;
+        }
 
-  /* ---------- shared "game menu" button ---------- */
-  .btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    padding:16px 30px;
-    background:var(--bg-1);
-    border:1px solid var(--line);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    font-size:15px;
-    font-weight:600;
-    text-decoration:none;
-    cursor:pointer;
-    transition:border-color .15s ease, background .15s ease;
-  }
-  .btn:hover{background:var(--bg-2);}
-  .btn:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;}
-  .btn-primary{border-color:var(--accent);color:var(--accent-2);}
-  .btn-primary:hover{background:rgba(245,166,35,.08);}
-  .btn-ghost{color:var(--muted);}
+        .animated-underline::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff2a4b, #ff6b81, #ff2a4b);
+            box-shadow: 0 0 15px #ff2a4b, 0 0 30px #ff2a4b;
+            border-radius: 2px;
+            transition: width 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
 
-  /* ---------- section shell ---------- */
-  section{padding:80px 0;}
-  .section-head{max-width:520px;margin-bottom:48px;}
-  .section-head .eyebrow{margin-bottom:10px;}
-  h2{
-    font-size:30px;
-    font-weight:600;
-    margin:0 0 12px;
-  }
-  .section-head p{color:var(--muted);margin:0;font-size:15.5px;}
+        .animated-underline.active::after {
+            width: 100%;
+        }
 
-  /* ---------- features: bordered rows, like a settings list ---------- */
-  .feature-list{border-top:1px solid var(--line-soft);}
-  .feature-row{
-    display:grid;
-    grid-template-columns:24px 220px 1fr;
-    gap:24px;
-    align-items:baseline;
-    padding:22px 0;
-    border-bottom:1px solid var(--line-soft);
-  }
-  .feature-row .chip{
-    width:10px;height:10px;
-    border:1.5px solid var(--accent);
-    margin-top:6px;
-  }
-  .feature-row h3{
-    font-size:17px;
-    font-weight:600;
-    margin:0;
-    letter-spacing:.01em;
-  }
-  .feature-row p{
-    margin:0;
-    color:var(--muted);
-    font-size:15px;
-  }
-  .feature-row.zombie .chip{border-color:var(--danger);}
+        /* Button Glow & Glassmorphic Effects */
+        .btn-red-glow {
+            background: linear-gradient(135deg, #ff2a4b 0%, #ba102d 100%);
+            box-shadow: 0 0 20px rgba(255, 42, 75, 0.4);
+            transition: all 0.3s ease;
+        }
 
-  @media (max-width:640px){
-    .feature-row{grid-template-columns:18px 1fr;}
-    .feature-row h3{grid-column:2;}
-    .feature-row p{grid-column:2;}
-  }
+        .btn-red-glow:hover {
+            box-shadow: 0 0 35px rgba(255, 42, 75, 0.8);
+            transform: translateY(-2px) scale(1.02);
+        }
 
-  /* ---------- download ---------- */
-  .download-panel{
-    border:1px solid var(--line);
-    background:var(--bg-1);
-    padding:40px;
-  }
-  .os-tabs{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom:28px;
-  }
-  .os-tab{
-    padding:11px 18px;
-    border:1px solid var(--line);
-    background:transparent;
-    color:var(--muted);
-    font-family:'Inter',sans-serif;
-    font-size:14px;
-    font-weight:500;
-    cursor:pointer;
-    transition:border-color .15s ease, color .15s ease;
-  }
-  .os-tab[aria-selected="true"]{
-    border-color:var(--accent);
-    color:var(--accent-2);
-  }
-  .os-tab:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;}
+        .btn-outline-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 42, 75, 0.5);
+            box-shadow: 0 0 15px rgba(255, 42, 75, 0.1);
+            transition: all 0.3s ease;
+        }
 
-  .download-row{
-    display:flex;
-    align-items:center;
-    gap:20px;
-    flex-wrap:wrap;
-  }
-  .download-info{color:var(--muted);font-size:14px;}
-  .download-info b{color:var(--text);display:block;font-size:16px;margin-bottom:2px;font-family:'Chakra Petch',sans-serif;font-weight:600;}
+        .btn-outline-glass:hover {
+            background: rgba(255, 42, 75, 0.15);
+            border-color: #ff2a4b;
+            box-shadow: 0 0 25px rgba(255, 42, 75, 0.4);
+            transform: translateY(-2px) scale(1.02);
+        }
 
-  /* ---------- footer ---------- */
-  footer{
-    border-top:1px solid var(--line-soft);
-    padding:32px 0 40px;
-  }
-  .foot-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:14px;
-  }
-  .tags{color:var(--muted);font-size:13px;}
-  .tags span{margin:0 8px;}
-  .tags span:first-child{margin-left:0;}
-  footer a.gh{color:var(--muted);font-size:13px;text-decoration:none;border-bottom:1px solid var(--line);}
-  footer a.gh:hover{color:var(--text);border-color:var(--muted);}
-</style>
+        /* Modal Transition */
+        .modal-backdrop {
+            background: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal-backdrop.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-backdrop.open .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Disabled Tooltip styling */
+        .tooltip-trigger:hover .tooltip-box {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Smooth reveal animation for buttons */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar for modal/instructions */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0d12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff2a4b;
+            border-radius: 4px;
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between items-center relative selection:bg-havocRed selection:text-white">
 
-<div class="skyfield">
-  <div class="dot orange" style="width:4px;height:4px;top:12%;left:9%;"></div>
-  <div class="dot white" style="width:3px;height:3px;top:18%;left:30%;"></div>
-  <div class="dot orange" style="width:3px;height:3px;top:8%;left:72%;"></div>
-  <div class="dot white" style="width:4px;height:4px;top:24%;left:88%;"></div>
-  <div class="dot orange" style="width:3px;height:3px;top:34%;left:16%;"></div>
-  <div class="dot white" style="width:3px;height:3px;top:40%;left:60%;"></div>
-  <div class="dot orange" style="width:4px;height:4px;top:6%;left:48%;"></div>
-  <div class="dot white" style="width:3px;height:3px;top:46%;left:94%;"></div>
+    <!-- Background Canvas for dynamic wave lines -->
+    <canvas id="bgCanvas"></canvas>
 
-  <header class="hero wrap">
-    <div class="mark" aria-hidden="true"></div>
-    <p class="eyebrow">CUBE HAVOC</p>
-    <h1 class="title">CUBE&nbsp;HAVOC</h1>
-    <p class="tagline">LAN MAYHEM <strong>·</strong> ВЕРСИЯ 3.0</p>
-    <p class="dek">Процедурные арены, честная физика и зомби, которые не прощают промахов. Разверни сервер в своей сети — и играй с друзьями без единого порта, открытого наружу.</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="#download">Скачать игру</a>
-      <a class="btn btn-ghost" href="https://github.com/JunDevX/CubeHavoc/tree/main" target="_blank" rel="noopener">Исходники на GitHub</a>
-    </div>
-  </header>
-</div>
-
-<main>
-  <section class="wrap" id="features">
-    <div class="section-head">
-      <p class="eyebrow">Что внутри</p>
-      <h2>Игра для одного вечера с друзьями в одной сети</h2>
-      <p>Ни аккаунтов, ни матчмейкинга — только LAN, кубы и последствия.</p>
-    </div>
-
-    <div class="feature-list">
-      <div class="feature-row">
-        <div class="chip"></div>
-        <h3>Процедурные ассеты</h3>
-        <p>Каждый запуск собирает арену заново — планировку, укрытия и мелочи окружения.</p>
-      </div>
-      <div class="feature-row">
-        <div class="chip"></div>
-        <h3>LAN discovery</h3>
-        <p>Серверы в локальной сети находятся сами — не нужно вводить IP вручную.</p>
-      </div>
-      <div class="feature-row">
-        <div class="chip"></div>
-        <h3>Физика</h3>
-        <p>Кубы толкаются, ломаются и разлетаются согласно массе, а не сценарию.</p>
-      </div>
-      <div class="feature-row zombie">
-        <div class="chip"></div>
-        <h3>Зомби-режим</h3>
-        <p>Волны становятся плотнее с каждым раундом — рано или поздно строй развалится.</p>
-      </div>
-      <div class="feature-row">
-        <div class="chip"></div>
-        <h3>Встроенный чат</h3>
-        <p>Договаривайтесь о тактике или предавайте союзников — всё в одном окне.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="wrap" id="download">
-    <div class="section-head">
-      <p class="eyebrow">Установка</p>
-      <h2>Выбери платформу и скачай сборку</h2>
-      <p>Актуальные сборки версии 3.0 публикуются в релизах на GitHub.</p>
-    </div>
-
-    <div class="download-panel">
-      <div class="os-tabs" role="tablist" aria-label="Выбор операционной системы">
-        <button class="os-tab" role="tab" aria-selected="true" data-os="Windows">Windows</button>
-        <button class="os-tab" role="tab" aria-selected="false" data-os="Linux">Linux</button>
-        <button class="os-tab" role="tab" aria-selected="false" data-os="macOS (Intel)">macOS · Intel</button>
-        <button class="os-tab" role="tab" aria-selected="false" data-os="macOS (Apple Silicon)">macOS · Apple Silicon</button>
-      </div>
-
-      <div class="download-row">
-        <a class="btn btn-primary" id="download-btn" href="https://github.com/JunDevX/CubeHavoc/tree/main" target="_blank" rel="noopener">Скачать для Windows</a>
-        <div class="download-info">
-          <b>Cube Havoc 3.0</b>
-          Сборки и заметки о релизе — в репозитории на GitHub
+    <!-- Header Navigation Bar -->
+    <header class="w-full max-w-7xl px-6 py-6 flex justify-between items-center z-10">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-havocRed flex items-center justify-center font-bold text-lg shadow-[0_0_15px_#ff2a4b]">
+                C
+            </div>
+            <span class="font-extrabold tracking-wider text-xl uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                CubeHavoc
+            </span>
         </div>
-      </div>
-    </div>
-  </section>
-</main>
+        <a href="https://github.com/JunDevX/CubeHavoc" target="_blank" rel="noopener" class="text-gray-400 hover:text-havocRed transition-colors text-xl">
+            <i class="fa-brands fa-github"></i>
+        </a>
+    </header>
 
-<footer>
-  <div class="wrap foot-row">
-    <p class="tags">
-      <span>Процедурные ассеты</span>·<span>LAN discovery</span>·<span>чат</span>·<span>физика</span>·<span>зомби</span>
-    </p>
-    <a class="gh" href="https://github.com/JunDevX/CubeHavoc/tree/main" target="_blank" rel="noopener">github.com/JunDevX/CubeHavoc</a>
-  </div>
-</footer>
+    <!-- Main Hero Section -->
+    <main class="w-full max-w-4xl px-4 py-12 flex flex-col items-center justify-center text-center z-10 my-auto">
+        
+        <!-- Game Title Container -->
+        <div class="mb-10 relative">
+            <div class="animated-underline inline-block pb-2">
+                <h1 id="heroTitle" class="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-white typewriter-text"></h1>
+            </div>
+            <p id="subTitle" class="mt-6 text-gray-400 text-sm sm:text-base max-w-lg mx-auto opacity-0 transition-opacity duration-700">
+                Погрузитесь в динамичный мир хаоса, кубических сражений и непредсказуемых арендных испытаний.
+            </p>
+        </div>
 
-<script>
-  var tabs = document.querySelectorAll('.os-tab');
-  var downloadBtn = document.getElementById('download-btn');
-  tabs.forEach(function(tab){
-    tab.addEventListener('click', function(){
-      tabs.forEach(function(t){ t.setAttribute('aria-selected','false'); });
-      tab.setAttribute('aria-selected','true');
-      var os = tab.getAttribute('data-os');
-      downloadBtn.textContent = 'Скачать для ' + os;
+        <!-- Buttons Group -->
+        <div id="actionButtons" class="fade-in-up flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-xl">
+            
+            <!-- Button 1: Установить -->
+            <a href="https://github.com/JunDevX/CubeHavoc/releases/latest/" 
+               target="_blank" 
+               rel="noopener"
+               class="btn-red-glow w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-white text-lg flex items-center justify-center space-x-3 group">
+                <i class="fa-solid fa-download group-hover:translate-y-1 transition-transform"></i>
+                <span>Установить</span>
+            </a>
+
+            <!-- Button 2: Подать в бета тестера -->
+            <button id="btnBetaTester" 
+                    onclick="openBetaModal()"
+                    class="btn-outline-glass w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-white text-lg flex items-center justify-center space-x-3">
+                <i class="fa-solid fa-flask text-havocRed"></i>
+                <span>Подать в бета тестера</span>
+            </button>
+
+            <!-- Button 3: Подать на стафф (Disabled with tooltip) -->
+            <div class="relative w-full sm:w-auto tooltip-trigger">
+                <button disabled 
+                        class="w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-gray-500 bg-white/5 border border-white/10 cursor-not-allowed opacity-60 flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Подать на стафф</span>
+                </button>
+                <div class="tooltip-box absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-1.5 rounded-md bg-zinc-900 text-xs text-havocRed font-mono border border-havocRed/30 shadow-lg opacity-0 transform translate-y-1 transition-all duration-200 pointer-events-none whitespace-nowrap">
+                    <i class="fa-solid fa-lock mr-1"></i> Пока недоступно
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- STREAMING_CHUNK:Instruction Section for Google Form -> Discord Integration... -->
+    <!-- Discord Integration Collapsible Guide -->
+    <div id="discordGuideModal" class="w-full max-w-3xl px-4 mb-12 hidden z-10">
+        <div class="bg-havocCard border border-zinc-800 rounded-2xl p-6 shadow-2xl text-left text-sm text-gray-300">
+            <div class="flex justify-between items-center mb-4 border-b border-zinc-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-brands fa-discord text-indigo-400"></i>
+                    Инструкция: Отправка ответов формы в Discord через Webhook
+                </h3>
+                <button onclick="toggleDiscordGuide()" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <p class="mb-3">
+                Так как веб-браузеры блокируют прямой доступ к ответам чужой iframe-формы из-за правил безопасности CORS, отправка данных из Google Формы в Discord Webhook выполняется за 1 минуту через встроенный сервис <strong>Google Apps Script</strong>:
+            </p>
+
+            <ol class="list-decimal list-inside space-y-2 mb-4 font-mono text-xs text-gray-300">
+                <li>Откройте вашу <strong>Google Форму</strong> в режиме редактирования.</li>
+                <li>В правом верхнем углу нажмите <strong>три точки ⋮</strong> &rarr; <strong>Редактор скриптов (Apps Script)</strong>.</li>
+                <li>Вставьте код ниже (замените ваш Webhook URL) и сохраните:</li>
+            </ol>
+
+            <!-- Code Block -->
+            <div class="relative bg-black/70 p-4 rounded-xl border border-zinc-800 font-mono text-xs text-green-400 overflow-x-auto mb-4">
+                <pre id="scriptCode"><code>function onFormSubmit(e) {
+  var POST_URL = "https://discord.com/api/webhooks/1556277069242175488/vLuU7bcgD1P4yhfomvR0PlOqfUwnGZ6khwDJrS4CltkTlCCgbVE4lieLAbvmLzRNBYzx";
+  var itemResponses = e.response.getItemResponses();
+  var items = [];
+  
+  for (var i = 0; i < itemResponses.length; i++) {
+    items.push({
+      name: itemResponses[i].getItem().getTitle(),
+      value: itemResponses[i].getResponse().toString() || "Не указано",
+      inline: false
     });
-  });
-</script>
+  }
 
+  var options = {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify({
+      username: "CubeHavoc Bot",
+      avatar_url: "https://i.imgur.com/4M34hi2.png",
+      embeds: [{
+        title: "🚀 Новая заявка на Бета-Тест CubeHavoc!",
+        color: 16722507, // Красный цвет CubeHavoc
+        fields: items,
+        timestamp: new Date().toISOString()
+      }]
+    })
+  };
+  
+  UrlFetchApp.fetch(POST_URL, options);
+}</code></pre>
+                <button onclick="copyCode()" class="absolute top-2 right-2 px-3 py-1 bg-zinc-800 hover:bg-havocRed text-white text-xs rounded transition-colors flex items-center gap-1">
+                    <i class="fa-regular fa-copy"></i> Скопировать
+                </button>
+            </div>
+
+            <ol start="4" class="list-decimal list-inside space-y-2 font-mono text-xs text-gray-300">
+                <li>Слева выберите иконку <strong>Триггеры (будильник)</strong> &rarr; <strong>Добавить триггер</strong>.</li>
+                <li>Выберите функцию: <code>onFormSubmit</code> | Источник: <code>Из формы</code> | Тип события: <code>При отправке формы</code>.</li>
+                <li>Нажмите <strong>Сохранить</strong> и подтвердите разрешения. Готово! Теперь ответы приходят прямо в Discord.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Beta Form Modal Window -->
+    <div id="betaModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        <div class="modal-content relative w-full max-w-3xl bg-havocCard border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-zinc-900/80 border-b border-zinc-800 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-flask text-havocRed text-lg"></i>
+                    <h2 class="text-white font-bold text-lg">Заявка на Бета-Тестирование</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="https://forms.gle/9XWwGMiL87gSxkXM9" target="_blank" rel="noopener" class="text-xs text-gray-400 hover:text-havocRed transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Открыть в новой вкладке
+                    </a>
+                    <button onclick="closeBetaModal()" class="text-gray-400 hover:text-white text-xl transition-colors w-8 h-8 rounded-lg hover:bg-zinc-800 flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content Body / Form Iframe Container -->
+            <div class="relative flex-1 bg-zinc-950 overflow-hidden flex flex-col justify-center items-center">
+                
+                <!-- Loading Fallback Indicator -->
+                <div id="formLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950 z-10 transition-opacity duration-300">
+                    <div class="w-10 h-10 border-4 border-havocRed/30 border-t-havocRed rounded-full animate-spin mb-4"></div>
+                    <p class="text-gray-400 text-sm font-mono">Загрузка Google Формы...</p>
+                    <p class="text-zinc-600 text-xs mt-2">Если форма не грузится, воспользуйтесь внешней ссылкой</p>
+                </div>
+
+                <!-- Google Form Iframe -->
+                <iframe id="googleFormIframe" 
+                        src="https://docs.google.com/forms/d/e/1FAIpQLScqNcTqyRbBoeeCGo6h6U2-SPAT79_u9MtLqs0LM1aHrT0uSw/viewform?embedded=true" 
+                        class="w-full h-[600px] border-0" 
+                        onload="onIframeLoad()">
+                    Загрузка…
+                </iframe>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-3 bg-zinc-900/50 border-t border-zinc-800 flex justify-between items-center text-xs text-gray-500 font-mono">
+                <span>CubeHavoc Beta Access Program</span>
+                <button onclick="closeBetaModal()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors font-sans font-semibold">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full py-6 text-center text-xs text-zinc-600 font-mono z-10">
+        &copy; 2026 JunDevX — CubeHavoc. Все права защищены.
+    </footer>
+
+    <script>
+        // Typewriter Effect for CubeHavoc Title
+        const titleText = "CubeHavoc";
+        const titleElement = document.getElementById("heroTitle");
+        const subTitleElement = document.getElementById("subTitle");
+        const underlineContainer = document.querySelector(".animated-underline");
+        const actionButtons = document.getElementById("actionButtons");
+        let charIndex = 0;
+
+        function typeWriter() {
+            if (charIndex < titleText.length) {
+                titleElement.textContent += titleText.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 120);
+            } else {
+                // Typing finished: Remove cursor line, trigger underline animation & fade in buttons
+                setTimeout(() => {
+                    titleElement.style.borderRight = "none";
+                    underlineContainer.classList.add("active");
+                }, 200);
+
+                setTimeout(() => {
+                    subTitleElement.classList.remove("opacity-0");
+                    actionButtons.classList.add("visible");
+                    document.getElementById("infoToggleContainer").classList.add("visible");
+                }, 600);
+            }
+        }
+
+        window.onload = function () {
+            // Start typewriter
+            typeWriter();
+            
+            // Start background canvas animation
+            initCanvas();
+            
+            // Timeout safety for form iframe redirect if loading hangs
+            initFormTimeout();
+        };
+
+        // Modal functions
+        function openBetaModal() {
+            const modal = document.getElementById("betaModal");
+            modal.classList.add("open");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeBetaModal() {
+            const modal = document.getElementById("betaModal");
+            modal.classList.remove("open");
+            document.body.style.overflow = "auto";
+        }
+
+        // Close modal on click outside content
+        document.getElementById("betaModal").addEventListener("click", function(e) {
+            if (e.target === this) {
+                closeBetaModal();
+            }
+        });
+
+        // Form Loader & Redirect Safety Timeout
+        let formLoaded = false;
+        function onIframeLoad() {
+            formLoaded = true;
+            const loader = document.getElementById("formLoader");
+            if (loader) {
+                loader.style.opacity = "0";
+                setTimeout(() => loader.style.display = "none", 300);
+            }
+        }
+
+        function initFormTimeout() {
+            // If iframe fails to load in 8 seconds, offer direct fallback redirect
+            setTimeout(() => {
+                if (!formLoaded) {
+                    console.warn("Google Form iframe takes too long to load. Providing direct redirect fallback.");
+                    const loader = document.getElementById("formLoader");
+                    if (loader) {
+                        loader.innerHTML = `
+                            <p class="text-havocRed font-bold mb-2">Загрузка формы занимает слишком много времени.</p>
+                            <a href="https://forms.gle/9XWwGMiL87gSxkXM9" target="_blank" class="px-4 py-2 bg-havocRed text-white font-bold rounded-lg hover:bg-havocRedDark transition-colors">
+                                Перейти к форме напрямую &rarr;
+                            </a>
+                        `;
+                    }
+                }
+            }, 8000);
+        }
+
+        // Discord Integration Guide Toggle
+        function toggleDiscordGuide() {
+            const guide = document.getElementById("discordGuideModal");
+            guide.classList.toggle("hidden");
+            if (!guide.classList.contains("hidden")) {
+                guide.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Copy Code to Clipboard helper
+        function copyCode() {
+            const code = document.getElementById("scriptCode").innerText;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = code;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            
+            alert("Код скрипта успешно скопирован в буфер обмена!");
+        }
+
+        // Canvas Red Abstract Smooth Wavy Lines Background
+        function initCanvas() {
+            const canvas = document.getElementById("bgCanvas");
+            const ctx = canvas.getContext("2d");
+
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener("resize", () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            // Smooth floating red waves config
+            const waves = [
+                { y: height * 0.5, length: 0.003, amplitude: 80, speed: 0.008, color: "rgba(255, 42, 75, 0.15)", width: 3 },
+                { y: height * 0.55, length: 0.002, amplitude: 120, speed: 0.005, color: "rgba(180, 15, 40, 0.2)", width: 2 },
+                { y: height * 0.45, length: 0.004, amplitude: 60, speed: 0.012, color: "rgba(255, 100, 120, 0.1)", width: 1.5 },
+                { y: height * 0.6, length: 0.0015, amplitude: 150, speed: 0.004, color: "rgba(255, 42, 75, 0.08)", width: 4 }
+            ];
+
+            let increment = 0;
+
+            function animateCanvas() {
+                requestAnimationFrame(animateCanvas);
+                ctx.clearRect(0, 0, width, height);
+
+                // Dark ambient gradient background
+                const grad = ctx.createRadialGradient(width / 2, height / 2, 100, width / 2, height / 2, Math.max(width, height));
+                grad.addColorStop(0, '#0d070b');
+                grad.addColorStop(1, '#050508');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, width, height);
+
+                increment += 0.01;
+
+                // Draw slow floating red wavy lines
+                waves.forEach((wave) => {
+                    ctx.beginPath();
+                    ctx.moveTo(0, wave.y);
+
+                    for (let x = 0; x < width; x++) {
+                        ctx.lineTo(
+                            x,
+                            wave.y + Math.sin(x * wave.length + increment * wave.speed * 50) * wave.amplitude * Math.sin(increment * 0.5)
+                        );
+                    }
+
+                    ctx.strokeStyle = wave.color;
+                    ctx.lineWidth = wave.width;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = "#ff2a4b";
+                    ctx.stroke();
+                    ctx.closePath();
+                });
+            }
+
+            animateCanvas();
+        }
+    </script>
 </body>
 </html>
