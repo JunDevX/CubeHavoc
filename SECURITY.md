@@ -1,6 +1,7 @@
 # Supported versions
 | Version | Windows | Linux | MacOS [APPLE] | MacOS [INTEL] |
 | --- | --- | --- | --- | --- |
+| 4.0 | ✔️ | ✔️ | ✖️ | ✖️ |
 | 3.0 | ✔️ | ✔️ | ✔️ | ✔️ |
 | 2.1 | ✔️ | ✖️ | ✖️ | ✖️ |
 | 2.0 | ✔️ | ✖️ | ✖️ | ✖️ |
